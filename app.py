@@ -1,47 +1,48 @@
 import threading
-import subprocess
-import sys
 import os
+import sys
 import time
 
+# Use the SAME python that is running this script
+PYTHON = sys.executable
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 def run_simulator():
-    os.system("python3 simulators/sensor_simulator.py")
+    os.chdir(BASE_DIR)
+    os.system(f"{PYTHON} simulators/sensor_simulator.py")
 
 def run_pipeline():
-    os.system("python3 pipeline/pathway_pipeline.py")
+    os.chdir(BASE_DIR)
+    os.system(f"{PYTHON} pipeline/pathway_pipeline.py")
 
 def run_rag():
-    os.system("python3 pipeline/pathway_rag_server.py")
+    os.chdir(BASE_DIR)
+    os.system(f"{PYTHON} pipeline/pathway_rag_server.py")
 
 def run_backend():
-    os.system("python3 backend/app.py")
+    os.chdir(BASE_DIR)
+    os.system(f"{PYTHON} backend/app.py")
 
-def run_frontend():
-    os.system("streamlit run frontend/dashboard.py --server.address 0.0.0.0")
-
-if __name__ == "__main__":
-    print("🚀 Starting FailureGuard AI...")
-
-    # Start all processes in separate threads
+# Start background processes
+def start_background():
     threads = [
-        threading.Thread(target=run_simulator),
-        threading.Thread(target=run_pipeline),
-        threading.Thread(target=run_rag),
-        threading.Thread(target=run_backend),
-        threading.Thread(target=run_frontend),
+        threading.Thread(target=run_simulator, daemon=True),
+        threading.Thread(target=run_pipeline, daemon=True),
+        threading.Thread(target=run_rag, daemon=True),
+        threading.Thread(target=run_backend, daemon=True),
     ]
-
     for t in threads:
-        t.daemon = True
         t.start()
-        time.sleep(2)  # Small delay between each startup
+        time.sleep(2)
 
-    print("✅ All systems running!")
-    print("🌐 Open browser at http://localhost:8501")
+# Only start once
+if "BACKGROUND_STARTED" not in os.environ:
+    os.environ["BACKGROUND_STARTED"] = "1"
+    print("🚀 Starting background services...")
+    start_background()
+    print("⏳ Waiting for services to initialize...")
+    time.sleep(8)
+    print("✅ All services running!")
 
-    # Keep main thread alive
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("Shutting down...")
+# Run dashboard
+exec(open(os.path.join(BASE_DIR, "frontend/dashboard.py")).read())
