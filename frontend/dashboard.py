@@ -7,7 +7,7 @@ if "assistant_answer" not in st.session_state:
     st.session_state.assistant_answer = None
 
 # ── Config ──
-API_URL = "http://localhost:8000"
+API_URL = "https://predictive-maintenance-fa8i.onrender.com"
 MACHINE_ORDER = ["MOTOR_C", "PUMP_B", "PUMP_A", "COMPRESSOR_D"]
 
 st.set_page_config(
