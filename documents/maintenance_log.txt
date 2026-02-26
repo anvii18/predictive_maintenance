@@ -1,0 +1,42 @@
+MAINTENANCE HISTORY LOG
+=======================
+
+Date: 2024-01-15 | Machine: PUMP_A
+Issue: High vibration detected (3.8 mm/s)
+Root Cause: Main bearing wear due to insufficient lubrication
+Action Taken: Replaced main bearings, realigned shaft, added lubrication
+Parts Used: Bearing set SKF-6205, alignment shims
+Result: Vibration reduced to 1.9 mm/s
+Downtime: 4 hours
+Technician: Prakash Kumar
+Cost: ₹12,500
+
+Date: 2024-01-28 | Machine: MOTOR_C
+Issue: Temperature spike to 88°C during peak load
+Root Cause: Blocked cooling fins with dust accumulation
+Action Taken: Cleaned cooling fins, replaced coolant, checked fan operation
+Parts Used: Industrial coolant 5L
+Result: Temperature normalized to 68°C
+Downtime: 2 hours
+Technician: Priya Sharma
+Cost: ₹3,200
+
+Date: 2024-02-05 | Machine: COMPRESSOR_D
+Issue: Pressure drop to 2.8 bar
+Root Cause: Worn shaft seals causing air leakage
+Action Taken: Replaced shaft seals, tightened all connections, pressure tested
+Parts Used: Seal kit CS-204
+Result: Pressure restored to 4.2 bar
+Downtime: 3 hours
+Technician: Amit Singh
+Cost: ₹8,700
+
+Date: 2024-02-10 | Machine: PUMP_B
+Issue: Unusual noise during operation
+Root Cause: Loose mounting bolts causing resonance vibration
+Action Taken: Tightened all mounting bolts, added vibration dampeners
+Parts Used: M16 bolts x8, rubber dampeners x4
+Result: Noise eliminated, vibration reduced to 1.5 mm/s
+Downtime: 1 hour
+Technician: Rajesh Kumar
+Cost: ₹1,800

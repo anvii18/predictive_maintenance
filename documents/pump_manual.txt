@@ -1,0 +1,80 @@
+INDUSTRIAL PUMP & EQUIPMENT OPERATIONS MANUAL
+==============================================
+
+NORMAL OPERATING RANGES:
+- Temperature: 60-75°C
+  Warning above 80°C
+  Critical above 90°C
+  Immediate shutdown above 95°C
+
+- Vibration: 1.0-2.5 mm/s
+  Warning above 3.0 mm/s
+  Critical above 4.0 mm/s
+  Immediate shutdown above 5.0 mm/s
+
+- Pressure: 3.5-5.0 bar
+  Warning below 3.0 bar
+  Critical below 2.5 bar
+  Immediate shutdown below 2.0 bar
+
+- RPM: 1400-1500
+  Warning below 1350
+
+COMMON ISSUES AND CAUSES:
+
+1. HIGH TEMPERATURE
+   Possible Causes:
+   - Blocked cooling fins or vents
+   - Low coolant level
+   - Failed cooling fan
+   - Bearing friction due to wear
+   - Overloading beyond rated capacity
+   
+   Immediate Actions:
+   - Reduce machine load by 20%
+   - Check coolant levels immediately
+   - Inspect cooling fan operation
+   - If temperature exceeds 90°C shut down within 10 minutes
+   - If temperature exceeds 95°C shut down immediately
+
+2. HIGH VIBRATION
+   Possible Causes:
+   - Worn or damaged bearings
+   - Shaft misalignment
+   - Loose mounting bolts
+   - Imbalanced rotating components
+   - Cavitation in pump
+   
+   Immediate Actions:
+   - Stop machine for visual inspection
+   - Check all mounting bolts for tightness
+   - Inspect bearing condition
+   - Check shaft alignment with alignment tool
+   - If vibration exceeds 4.0 mm/s replace bearings immediately
+
+3. LOW PRESSURE
+   Possible Causes:
+   - Leaking seals or gaskets
+   - Blocked inlet valve
+   - Worn pump impeller
+   - Air trapped in system
+   - Pipe leakage
+   
+   Immediate Actions:
+   - Check all connection points for visible leaks
+   - Inspect inlet and outlet valves
+   - Bleed air from system
+   - Check seal integrity
+   - Verify pump impeller condition
+
+MAINTENANCE SCHEDULE:
+- Daily:   Visual inspection, oil level check
+- Weekly:  Lubrication, filter inspection
+- Monthly: Full bearing inspection, alignment check
+- Quarterly: Complete overhaul and inspection
+
+SPARE PARTS LIST:
+- Bearing set (replace every 6 months)
+- Shaft seals (replace every 3 months)
+- Cooling fan belt (replace every 12 months)
+- Filter cartridge (replace monthly)

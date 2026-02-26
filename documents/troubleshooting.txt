@@ -1,0 +1,78 @@
+TROUBLESHOOTING QUICK REFERENCE GUIDE
+======================================
+
+EMERGENCY PROCEDURES:
+If any machine reaches DANGER level (health score below 40%):
+1. Alert supervisor immediately
+2. Prepare for controlled shutdown
+3. Do NOT restart without full inspection
+
+─────────────────────────────────────
+
+SYMPTOM: Temperature above 80°C (WARNING)
+Priority: Medium
+
+Step 1: Check coolant level in reservoir
+Step 2: Inspect cooling fan — is it spinning?
+Step 3: Clean any dust from cooling fins
+Step 4: Reduce machine load by 20%
+Step 5: Monitor for 15 minutes
+Step 6: If temperature drops below 75°C — continue monitoring
+Step 7: If temperature stays above 80°C — escalate to CRITICAL procedure
+
+SYMPTOM: Temperature above 90°C (CRITICAL)
+Priority: High
+
+Step 1: Reduce machine load to minimum immediately
+Step 2: Check coolant — top up if below minimum line
+Step 3: Check cooling fan belt — replace if worn
+Step 4: Schedule bearing inspection within 24 hours
+Step 5: If temperature does not drop within 10 minutes — SHUT DOWN
+
+─────────────────────────────────────
+
+SYMPTOM: Vibration above 3.0 mm/s (WARNING)
+Priority: Medium
+
+Step 1: Check all mounting bolts with torque wrench
+Step 2: Listen for unusual sounds (grinding = bearing failure)
+Step 3: Check shaft alignment visually
+Step 4: Add lubrication to bearing points
+Step 5: Monitor for 30 minutes
+
+SYMPTOM: Vibration above 4.0 mm/s (CRITICAL)
+Priority: High
+
+Step 1: Stop machine immediately for inspection
+Step 2: Check bearing condition — look for heat discoloration
+Step 3: Check shaft for visible damage or bending
+Step 4: Replace bearings if any wear visible
+Step 5: Do NOT restart until vibration cause identified
+
+─────────────────────────────────────
+
+SYMPTOM: Pressure below 3.0 bar (WARNING)
+Priority: Medium
+
+Step 1: Walk around machine checking for visible leaks
+Step 2: Check inlet valve is fully open
+Step 3: Bleed air from system using bleed valve
+Step 4: Check filter — replace if clogged
+Step 5: Monitor pressure for 15 minutes
+
+SYMPTOM: Pressure below 2.5 bar (CRITICAL)
+Priority: High
+
+Step 1: Check all seals and gaskets for leakage
+Step 2: Inspect pump impeller for wear or damage
+Step 3: Pressure test all connections
+Step 4: Replace seals if any leakage found
+Step 5: If pressure cannot be restored — shut down and call senior technician
+
+─────────────────────────────────────
+
+CONTACT INFORMATION:
+Senior Technician: +91-XXXXX-XXXXX
+Maintenance Supervisor: +91-XXXXX-XXXXX
+Spare Parts Store: Extension 204
+Emergency Line: Extension 911
