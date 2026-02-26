@@ -1,0 +1,10 @@
+pathway==0.29.1
+fastapi
+uvicorn
+streamlit
+plotly
+groq
+pandas
+numpy
+requests
+google-genai
