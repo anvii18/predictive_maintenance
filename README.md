@@ -162,4 +162,3 @@ Cost savings: Up to 60% lower emergency repair costs
 
 Safety: Prevents hazardous equipment breakdowns
 
-👩‍💻 Team Roles
