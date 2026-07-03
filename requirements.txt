@@ -6,4 +6,5 @@ plotly
 groq
 pandas
 numpy
+pyarrow==18.1.0
 requests
