@@ -1,201 +1,129 @@
-FailureGuard AI
+# FailureGuard AI — Predictive Maintenance Demo
 
-Live Real-Time Predictive Maintenance System powered by streaming analytics and AI
+A real-time predictive-maintenance prototype that simulates industrial sensor telemetry, processes readings with **Pathway**, exposes machine health through **FastAPI**, and visualizes the results in a **Streamlit** dashboard. An optional Groq-powered assistant answers maintenance questions using the current readings and local maintenance documents.
 
-Live Demo: https://anvii18-predictive-maintenance-app-966ivk.streamlit.app/
+> **Scope:** This is an educational prototype using simulated sensor data, not a validated industrial safety system. An anomaly flag is a rule-based warning, not a guarantee that a failure will occur.
 
-Overview-
+## Demo and repository
 
--FailureGuard AI is a predictive-maintenance demonstration that combines simulated sensor telemetry, streaming analytics, and an optional LLM assistant. Verify the linked live demo and its backend separately before describing the complete system as production-deployed. It:
+- **Repository:** https://github.com/anvii18/predictive_maintenance
+- **Hosted dashboard:** https://anvii18-predictive-maintenance-app-966ivk.streamlit.app/
+- **Local full-stack demo:** run the steps below. The hosted dashboard and local full-stack setup are separate; the hosted UI needs a reachable backend configured through `API_URL` to display live pipeline data.
 
--Monitors industrial equipment continuously
+## What it demonstrates
 
--Detects anomalies before failures occur
+- **Streaming telemetry:** a simulator writes readings for four machines every two seconds.
+- **Rule-based anomaly detection:** temperature, vibration, and pressure thresholds produce a health score and alert message.
+- **Live data pipeline:** Pathway reads the sensor CSV in streaming mode and writes processed records to JSONL.
+- **REST API:** FastAPI serves current readings, machine health, active alerts, fleet summary, and assistant queries.
+- **Document watcher:** Pathway watches the `documents/` folder and indexes maintenance text as files change.
+- **Dashboard:** Streamlit and Plotly display health metrics, sensor gauges, and active alerts.
+- **Optional LLM assistant:** set `GROQ_API_KEY` to enable generated maintenance guidance; without it, the API returns a clearly labelled rule-based demo response.
+- **Regression checks:** GitHub Actions checks Python syntax and runs backend tests.
 
--Computes real-time health scores
+## Architecture
 
--Provides AI-driven contextual repair guidance to technicians
-
-This platform uses streaming analytics and large language models to combine live telemetry with technical documentation for precise recommendations.
-
-🏗 System Architecture
-Industrial Sensors
-         ↓
-Sensor Simulator (updates every 2 sec)
-         ↓
-Pathway Streaming Engine
-         ↓
-   ├── Real-Time Anomaly Detection
-   └── Live Document Watcher
-         ↓
-FastAPI Backend (REST API)
-         ↓
-Groq LLM (Two-Step Intelligent RAG)
-         ↓
-Streamlit Dashboard (Live Visualization)
-
-Key Features -
-
--Real-time streaming analytics
-
--Instant anomaly detection
-
--Live documentation indexing
-
--AI repair assistant
-
--Auto update without system restart
-
--Local demo runner with supervised service shutdown
-
-Tech Stack-
-Component	Technology
-Streaming Engine	Pathway 0.29.1
-REST API Backend	FastAPI + Uvicorn
-Frontend	Streamlit + Plotly
-AI Layer	Groq API + LLaMA 3.3 70B
-Deployment	Streamlit Cloud
-
- 
-How It Works
-
--Sensor Stream
-Pathway continuously watches sensor_readings.csv
-Computes:
-Health score
-Anomaly status
-Alert messages
-Writes results to processed_readings.jsonl
-
--Document Watcher
-Pathway watches your documents/ folder in streaming mode
-Detects updates instantly
-Re-indexes technical documents in real time
-No manual refresh or server restart required
-
-📚 Knowledge Base (Live Indexed)
-
--pump_manual.txt
-Operating ranges
-Common issues
-Maintenance schedule
-Spare parts lists
-
--maintenance_log.txt
-Historical repair records
-Root causes
-Actions taken and costs
-Technician notes
-
-troubleshooting.txt
-Step-by-step repair procedures
-Emergency protocols
-Contact information
-
-API Endpoints
-Method	Endpoint	Description
-GET	/sensors	Latest machine sensor readings
-GET	/health	Health score per machine
-GET	/alerts	Only active anomalies
-GET	/summary	Fleet-wide health statistics
-POST	/query	AI repair guidance
-
-
-Project Structure
-predictive_maintenance/
-│
-├── simulators/                    # Sensor data generator
-│   └── sensor_simulator.py
-│
-├── pipeline/                     # Streaming pipelines
-│   ├── pathway_pipeline.py
-│   └── pathway_rag_server.py
-│
-├── documents/                    # Live Indexed Knowledge Base
-│   ├── pump_manual.txt
-│   ├── maintenance_log.txt
-│   └── troubleshooting.txt
-│
-├── backend/                      # REST API
-│   └── app.py
-│
-├── frontend/                     # Streamlit dashboard
-│   └── dashboard.py
-│
-├── data/                        # Pathway generated outputs
-│   ├── sensor_readings.csv
-│   ├── processed_readings.jsonl
-│   └── documents_index.jsonl
-│
-└── requirements.txt
-
--What Makes This a True Pathway Project
-
-Unlike many demos using Pathway superficially, FailureGuard AI uses two streaming pipelines:
-
-Pipeline 1 — Sensor Stream
-sensor_stream = pw.io.csv.read(
-    "data/sensor_readings.csv",
-    schema=SensorSchema,
-    mode="streaming"
-)
-processed = sensor_stream.select(
-    health_score=pw.apply(compute_health_score, ...),
-    is_anomaly=pw.apply(check_anomaly, ...),
-    alert_message=pw.apply(build_alert, ...)
-)
-pw.io.jsonlines.write(processed, "data/processed_readings.jsonl")
-Pipeline 2 — Document Watcher
-documents = pw.io.fs.read(
-    "documents/",
-    format="binary",
-    mode="streaming",
-    with_metadata=True
-)
-
-Pathway detects file changes instantly, and the AI layer automatically reflects updates — no manual trigger, no restart.
-
--Real-World Impact
-Target sectors: Manufacturing • Oil & Gas • Power Stations • Water Treatment
-Impact: Predict failures hours before they occur
-Cost savings: Up to 60% lower emergency repair costs
-
-Safety: Prevents hazardous equipment breakdowns
-
+```text
+Sensor simulator ──> sensor_readings.csv ──> Pathway sensor pipeline
+                                                │
+                                                v
+                                      processed_readings.jsonl
+                                                │
+Maintenance .txt ──> Pathway document watcher   v
+                         │                FastAPI backend
+                         v                      │
+                 documents_index.jsonl           v
+                                          Streamlit + Plotly
+                                                │
+                                     Optional Groq assistant
+```
 
 ## Run the complete demo locally
 
-Use Python 3.11 in a virtual environment. From the repository root:
+**Requirements:** Python 3.11 recommended. Pathway and its dependencies may take a few minutes to install.
 
-```bash
+From the repository root:
+
+```powershell
 python -m venv .venv
-# Windows PowerShell:
-.venv\\Scripts\\Activate.ps1
-# macOS/Linux:
-# source .venv/bin/activate
-
+.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python run_local.py
 ```
 
-The runner starts the sensor simulator, both Pathway pipelines, the FastAPI backend, and the Streamlit dashboard. Open http://localhost:8501. Press Ctrl+C in the terminal to stop the services. If startup fails, read the terminal output for the first service that exits.
+Open **http://localhost:8501**. The runner starts the simulator, both Pathway pipelines, the API, and the dashboard; it waits for the sensor file and API health check before continuing. Press **Ctrl+C** in the same terminal to stop the child processes.
 
-For manual development, the dashboard can still be started with `streamlit run app.py`; this launches the UI only. Set `API_URL` to the backend base URL if it is not at `http://127.0.0.1:8000`.
+On macOS/Linux, activate the environment with `source .venv/bin/activate`.
+
+### Expected demo behaviour
+
+1. The dashboard starts showing readings for four simulated machines.
+2. After approximately 20–24 seconds, `PUMP_A` begins receiving deliberately abnormal simulated readings.
+3. The Pathway pipeline should flag the anomaly, lower the health score, and surface an alert on the dashboard.
+4. Add or edit a `.txt` file in `documents/` to exercise the document watcher. Configure a Groq key if you want generated answers rather than the no-key demo response.
+
+The timing and thresholds are for demonstration only. They are not trained failure-prediction models and should not be used for real equipment decisions.
+
+## API endpoints
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| GET | `/healthz` | Liveness check |
+| GET | `/sensors` | Latest reading per machine |
+| GET | `/health` | Health score and status |
+| GET | `/alerts` | Machines currently flagged by the rules |
+| GET | `/summary` | Fleet-level counts and average health |
+| POST | `/query` | Maintenance assistant response |
+
+With the local demo running, try **http://127.0.0.1:8000/docs** for interactive API documentation.
+
+## Configuration
 
 Optional environment variables:
 
-- `GROQ_API_KEY`: enables the hosted LLM assistant; without it the assistant returns data-based demo responses.
-- `GROQ_MODEL`: overrides the configured Groq model.
-- `FAILUREGUARD_DATA_DIR`: overrides the local data directory.
-- `FAILUREGUARD_DOCUMENTS_DIR`: overrides the document directory.
-- `FAILUREGUARD_API_HOST` and `PORT`: configure the local backend bind address and port.
+| Variable | Purpose |
+| --- | --- |
+| `GROQ_API_KEY` | Enables the hosted LLM assistant; keep this secret |
+| `GROQ_MODEL` | Overrides the configured Groq model |
+| `API_URL` | Backend base URL used by the dashboard |
+| `FAILUREGUARD_DATA_DIR` | Overrides the directory for sensor and pipeline output files |
+| `FAILUREGUARD_DOCUMENTS_DIR` | Overrides the maintenance-document directory |
+| `FAILUREGUARD_API_HOST` | Local API bind host; defaults to `127.0.0.1` |
+| `PORT` | API port; defaults to `8000` |
+| `FAILUREGUARD_STARTUP_TIMEOUT` | Startup wait limit in seconds; defaults to `45` |
 
-## Run backend regression tests
+For a hosted frontend, set `API_URL` to a publicly reachable backend URL in the hosting platform's secrets/settings. Do not put API keys in source control.
+
+## Tests
+
+Create/activate the virtual environment, then run:
 
 ```bash
 python -m pip install fastapi uvicorn groq pytest httpx
+python -m compileall -q backend frontend pipeline simulators run_local.py app.py
 python -m pytest -q
 ```
 
-GitHub Actions runs the backend regression suite on pushes to the improvement branches and on pull requests into `main`. Passing these tests verifies the covered API and health-rule behavior; it does not replace a full local test of Pathway streaming and the hosted deployment.
+GitHub Actions runs the syntax check and backend regression tests for pushes to improvement branches and pull requests into `main`. These checks cover the tested API and rule logic; they do **not** substitute for manually verifying the full Pathway streaming flow or the hosted deployment.
 
+## Project layout
+
+```text
+backend/app.py                 FastAPI routes and assistant
+frontend/dashboard.py           Streamlit + Plotly UI
+pipeline/pathway_pipeline.py    Sensor streaming pipeline
+pipeline/pathway_rag_server.py  Live document watcher
+pipeline/health_rules.py        Testable health and alert rules
+simulators/sensor_simulator.py  Synthetic telemetry generator
+documents/                      Example maintenance documents
+tests/test_backend.py           Backend regression tests
+run_local.py                    Full local process supervisor
+```
+
+## Limitations and next steps
+
+- Telemetry is synthetic; the demo does not ingest real equipment data.
+- Health scores and alerts use transparent thresholds, not a validated predictive model.
+- The LLM assistant is optional and should be treated as advisory; verify all maintenance procedures against approved documentation.
+- Before presenting the hosted URL as a fully working end-to-end demo, verify that its configured backend is online and that the dashboard receives live data.
