@@ -18,5 +18,7 @@ jobs:
           python-version: "3.11"
       - name: Install backend test dependencies
         run: python -m pip install --upgrade pip fastapi uvicorn groq pytest httpx
+      - name: Check Python syntax
+        run: python -m compileall -q backend frontend pipeline simulators run_local.py app.py
       - name: Run backend regression tests
         run: python -m pytest -q
