@@ -1,44 +1,42 @@
-import pathway as pw
-import json
 import os
+from pathlib import Path
 
-print("✅ Pathway Document Watcher Starting...")
-print("👀 Watching documents/ folder for live changes...")
+import pathway as pw
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = Path(os.getenv("FAILUREGUARD_DATA_DIR", str(BASE_DIR / "data")))
+DOCUMENTS_DIR = Path(os.getenv("FAILUREGUARD_DOCUMENTS_DIR", str(BASE_DIR / "documents")))
+OUTPUT_FILE = DATA_DIR / "documents_index.jsonl"
+
 
 class DocSchema(pw.Schema):
     data: bytes
     path: str
 
-def run():
-    os.makedirs("data", exist_ok=True)
 
-    # Pathway watches documents folder in streaming mode
-    # When any file changes, Pathway reacts automatically
+def run():
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    if not DOCUMENTS_DIR.is_dir():
+        raise FileNotFoundError(f"Documents directory not found: {DOCUMENTS_DIR}")
+
+    print(f"Pathway document watcher watching {DOCUMENTS_DIR}", flush=True)
     documents = pw.io.fs.read(
-        "documents/",
+        str(DOCUMENTS_DIR),
         format="binary",
         mode="streaming",
-        with_metadata=True
+        with_metadata=True,
     )
-
-    # Extract text and filename from each document
     processed = documents.select(
         path=pw.this._metadata["path"],
         content=pw.apply(
             lambda data: data.decode("utf-8", errors="ignore"),
-            pw.this.data
-        )
+            pw.this.data,
+        ),
     )
-
-    # Write to JSONL so backend can read it
-    pw.io.jsonlines.write(
-        processed,
-        "data/documents_index.jsonl"
-    )
-
-    print("🚀 Document watcher running!")
-    print("📝 Any changes to documents/ will be detected instantly")
+    pw.io.jsonlines.write(processed, str(OUTPUT_FILE))
+    print("Pathway document watcher running.", flush=True)
     pw.run()
+
 
 if __name__ == "__main__":
     run()
