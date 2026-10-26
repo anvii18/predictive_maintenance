@@ -6,7 +6,7 @@ Live Demo: https://anvii18-predictive-maintenance-app-966ivk.streamlit.app/
 
 Overview-
 
--FailureGuard AI is a production-deployed, real-time predictive maintenance platform that:
+-FailureGuard AI is a predictive-maintenance demonstration that combines simulated sensor telemetry, streaming analytics, and an optional LLM assistant. Verify the linked live demo and its backend separately before describing the complete system as production-deployed. It:
 
 -Monitors industrial equipment continuously
 
@@ -46,7 +46,7 @@ Key Features -
 
 -Auto update without system restart
 
--Production-grade deployed app
+-Local demo runner with supervised service shutdown
 
 Tech Stack-
 Component	Technology
@@ -161,4 +161,41 @@ Impact: Predict failures hours before they occur
 Cost savings: Up to 60% lower emergency repair costs
 
 Safety: Prevents hazardous equipment breakdowns
+
+
+## Run the complete demo locally
+
+Use Python 3.11 in a virtual environment. From the repository root:
+
+```bash
+python -m venv .venv
+# Windows PowerShell:
+.venv\\Scripts\\Activate.ps1
+# macOS/Linux:
+# source .venv/bin/activate
+
+python -m pip install -r requirements.txt
+python run_local.py
+```
+
+The runner starts the sensor simulator, both Pathway pipelines, the FastAPI backend, and the Streamlit dashboard. Open http://localhost:8501. Press Ctrl+C in the terminal to stop the services. If startup fails, read the terminal output for the first service that exits.
+
+For manual development, the dashboard can still be started with `streamlit run app.py`; this launches the UI only. Set `API_URL` to the backend base URL if it is not at `http://127.0.0.1:8000`.
+
+Optional environment variables:
+
+- `GROQ_API_KEY`: enables the hosted LLM assistant; without it the assistant returns data-based demo responses.
+- `GROQ_MODEL`: overrides the configured Groq model.
+- `FAILUREGUARD_DATA_DIR`: overrides the local data directory.
+- `FAILUREGUARD_DOCUMENTS_DIR`: overrides the document directory.
+- `FAILUREGUARD_API_HOST` and `PORT`: configure the local backend bind address and port.
+
+## Run backend regression tests
+
+```bash
+python -m pip install fastapi uvicorn groq pytest httpx
+python -m pytest -q
+```
+
+GitHub Actions runs the backend regression suite on pushes to the improvement branches and on pull requests into `main`. Passing these tests verifies the covered API and health-rule behavior; it does not replace a full local test of Pathway streaming and the hosted deployment.
 
