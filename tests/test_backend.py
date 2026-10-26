@@ -49,7 +49,7 @@ def test_missing_sensor_file_returns_empty_results(tmp_path, monkeypatch):
 
 def test_query_rejects_blank_and_oversized_questions():
     with TestClient(backend.app) as client:
-        assert client.post("/query", json={"question": "   "}).status_code == 200
+        assert client.post("/query", json={"question": "   "}).status_code == 422
         assert client.post("/query", json={"question": "x" * 2001}).status_code == 422
 
 
@@ -60,5 +60,4 @@ def test_document_reader_falls_back_to_text_files(tmp_path, monkeypatch):
     monkeypatch.setattr(backend, "DOCUMENT_INDEX_FILE", tmp_path / "missing-index.jsonl")
     monkeypatch.setattr(backend, "DOCUMENTS_DIR", docs_dir)
 
-    docs = backend.read_documents()
-    assert docs == {"manual.txt": "Check vibration before restart."}
+    assert backend.read_documents() == {"manual.txt": "Check vibration before restart."}
