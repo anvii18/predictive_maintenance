@@ -3,7 +3,7 @@
 Usage:
     python run_local.py
 
-Stop all child processes with Ctrl+C. This script is intended for local
+Stop all child processes with Ctrl+C. This runner is intended for local
 development, not for deployment on Streamlit hosting platforms.
 """
 import os
@@ -20,11 +20,17 @@ API_HOST = os.getenv("FAILUREGUARD_API_HOST", "127.0.0.1")
 API_PORT = int(os.getenv("PORT", "8000"))
 API_URL = f"http://{API_HOST}:{API_PORT}"
 STARTUP_TIMEOUT = float(os.getenv("FAILUREGUARD_STARTUP_TIMEOUT", "45"))
+DATA_DIR = Path(os.getenv("FAILUREGUARD_DATA_DIR", str(BASE_DIR / "data"))).resolve()
+DOCUMENTS_DIR = Path(
+    os.getenv("FAILUREGUARD_DOCUMENTS_DIR", str(BASE_DIR / "documents"))
+).resolve()
 
 children: list[tuple[str, subprocess.Popen]] = []
 
 
-def start_process(name: str, command: list[str], env: dict[str, str] | None = None) -> subprocess.Popen:
+def start_process(
+    name: str, command: list[str], env: dict[str, str]
+) -> subprocess.Popen:
     print(f"[start] {name}: {' '.join(command)}", flush=True)
     process = subprocess.Popen(command, cwd=BASE_DIR, env=env)
     children.append((name, process))
@@ -78,38 +84,53 @@ def wait_for_api(process: subprocess.Popen) -> None:
 
 
 def main() -> int:
-    data_dir = BASE_DIR / "data"
-    data_dir.mkdir(exist_ok=True)
-    sensor_csv = data_dir / "sensor_readings.csv"
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    DOCUMENTS_DIR.mkdir(parents=True, exist_ok=True)
+    sensor_csv = DATA_DIR / "sensor_readings.csv"
+
+    # Give every child the same resolved data/document paths so custom paths
+    # behave consistently across the simulator, pipelines, and API.
+    runtime_env = os.environ.copy()
+    runtime_env["FAILUREGUARD_DATA_DIR"] = str(DATA_DIR)
+    runtime_env["FAILUREGUARD_DOCUMENTS_DIR"] = str(DOCUMENTS_DIR)
 
     # The simulator creates the CSV header before the streaming reader starts.
-    simulator = start_process("sensor simulator", [PYTHON, "simulators/sensor_simulator.py"])
+    simulator = start_process(
+        "sensor simulator", [PYTHON, "simulators/sensor_simulator.py"], runtime_env
+    )
     wait_for_file(sensor_csv, simulator, "sensor simulator")
 
-    start_process("sensor Pathway pipeline", [PYTHON, "pipeline/pathway_pipeline.py"])
-    start_process("document Pathway watcher", [PYTHON, "pipeline/pathway_rag_server.py"])
+    start_process(
+        "sensor Pathway pipeline", [PYTHON, "pipeline/pathway_pipeline.py"], runtime_env
+    )
+    start_process(
+        "document Pathway watcher",
+        [PYTHON, "pipeline/pathway_rag_server.py"],
+        runtime_env,
+    )
 
-    backend_env = os.environ.copy()
-    backend_env["FAILUREGUARD_DATA_DIR"] = str(data_dir)
-    backend_env["FAILUREGUARD_DOCUMENTS_DIR"] = str(BASE_DIR / "documents")
+    backend_env = runtime_env.copy()
     backend_env["API_URL"] = API_URL
     backend = start_process(
         "FastAPI backend",
-        [PYTHON, "-m", "uvicorn", "backend.app:app", "--host", API_HOST, "--port", str(API_PORT)],
-        env=backend_env,
+        [
+            PYTHON, "-m", "uvicorn", "backend.app:app",
+            "--host", API_HOST, "--port", str(API_PORT),
+        ],
+        backend_env,
     )
     wait_for_api(backend)
 
-    dashboard_env = os.environ.copy()
+    dashboard_env = runtime_env.copy()
     dashboard_env["API_URL"] = API_URL
-    dashboard = start_process(
+    start_process(
         "Streamlit dashboard",
         [PYTHON, "-m", "streamlit", "run", "frontend/dashboard.py"],
-        env=dashboard_env,
+        dashboard_env,
     )
 
     print("\nFailureGuard AI local demo is running.", flush=True)
-    print(f"Dashboard: http://localhost:8501", flush=True)
+    print("Dashboard: http://localhost:8501", flush=True)
     print(f"Backend:   {API_URL}", flush=True)
     print("Press Ctrl+C to stop all services.\n", flush=True)
 
