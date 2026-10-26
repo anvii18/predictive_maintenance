@@ -3,6 +3,7 @@ import json
 from fastapi.testclient import TestClient
 
 from backend import app as backend
+from pipeline.pathway_pipeline import build_alert, check_anomaly, compute_health_score
 
 
 def test_healthz_is_live_without_sensor_files():
@@ -59,5 +60,11 @@ def test_document_reader_falls_back_to_text_files(tmp_path, monkeypatch):
     (docs_dir / "manual.txt").write_text("Check vibration before restart.", encoding="utf-8")
     monkeypatch.setattr(backend, "DOCUMENT_INDEX_FILE", tmp_path / "missing-index.jsonl")
     monkeypatch.setattr(backend, "DOCUMENTS_DIR", docs_dir)
-
     assert backend.read_documents() == {"manual.txt": "Check vibration before restart."}
+
+
+def test_health_score_and_anomaly_rules():
+    assert compute_health_score(70, 2, 4) == 100
+    assert check_anomaly(85, 2, 4)
+    assert not check_anomaly(70, 2, 4)
+    assert "High temp" in build_alert("PUMP_A", 85, 2, 4)
