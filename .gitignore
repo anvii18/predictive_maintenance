@@ -1,0 +1,24 @@
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local secrets and environment configuration
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Generated streaming output (keep source documents and code in Git)
+data/*.csv
+data/*.jsonl
+
+# Editor / OS noise
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
