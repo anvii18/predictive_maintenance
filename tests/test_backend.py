@@ -3,7 +3,7 @@ import json
 from fastapi.testclient import TestClient
 
 from backend import app as backend
-from pipeline.pathway_pipeline import build_alert, check_anomaly, compute_health_score
+from pipeline.health_rules import build_alert, check_anomaly, compute_health_score
 
 
 def test_healthz_is_live_without_sensor_files():
