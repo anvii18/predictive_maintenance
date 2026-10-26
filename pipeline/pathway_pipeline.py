@@ -3,7 +3,10 @@ from pathlib import Path
 
 import pathway as pw
 
-from pipeline.health_rules import build_alert, check_anomaly, compute_health_score
+try:
+    from .health_rules import build_alert, check_anomaly, compute_health_score
+except ImportError:  # Supports direct execution: python pipeline/pathway_pipeline.py
+    from health_rules import build_alert, check_anomaly, compute_health_score
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = Path(os.getenv("FAILUREGUARD_DATA_DIR", str(BASE_DIR / "data")))
