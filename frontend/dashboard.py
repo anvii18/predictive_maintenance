@@ -9,9 +9,13 @@ import streamlit as st
 if "assistant_answer" not in st.session_state:
     st.session_state.assistant_answer = None
 
-# Set API_URL for deployment, for example:
-# API_URL=https://your-backend.example.com
-API_URL = os.getenv("API_URL", "http://127.0.0.1:8000").rstrip("/")
+# Configure API_URL in Streamlit Cloud secrets (API_URL = "https://your-backend.example.com").
+# Environment variables remain supported for local and container deployments.
+try:
+    _secret_api_url = st.secrets.get("API_URL", "")
+except Exception:
+    _secret_api_url = ""
+API_URL = (_secret_api_url or os.getenv("API_URL", "http://127.0.0.1:8000")).rstrip("/")
 MACHINE_ORDER = ["MOTOR_C", "PUMP_B", "PUMP_A", "COMPRESSOR_D"]
 
 st.set_page_config(
